@@ -20,7 +20,7 @@ export default function Login() {
       setError("");
       const data = await loginRequest(email, password);
       dispatch(login(data.token));
-      // dispatch(save(data.user)); // Assumes the API returns user data under `user`
+      dispatch(save(data.user));
       axiosClient.defaults.headers["Authorization"] = `Bearer ${data.token}`;
       router.push("/");
     } catch (err: any) {

@@ -20,10 +20,17 @@ export default function Signup() {
       setError("");
       const data = await signupRequest(email, password, name);
       dispatch(login(data.token));
-      dispatch(save(data.user)); // Assumes the API returns user data under `user`
-      router.push("/"); // Navigate to the home page
-    } catch (err) {
-      setError("Error signing up. Please try again.");
+      dispatch(
+        save({
+          email: data.email,
+          id: data.id,
+          username: data.username,
+          name: data.name,
+        }),
+      );
+      router.push("/");
+    } catch (err: any) {
+      setError(err.message);
     }
   };
 
