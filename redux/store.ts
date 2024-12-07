@@ -1,8 +1,10 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
-import storage from "@react-native-async-storage/async-storage";
+import localStorage from "redux-persist/lib/storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import authReducer from "./slices/authSlice";
 import userReducer from "./slices/userSlice";
+import { Platform } from "react-native";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -11,7 +13,7 @@ const rootReducer = combineReducers({
 
 const persistConfig = {
   key: "root",
-  storage,
+  storage: Platform.OS === "web" ? localStorage : AsyncStorage,
   whitelist: ["auth", "user"],
 };
 
@@ -21,9 +23,7 @@ const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
-      },
+      serializableCheck: false,
     }),
 });
 

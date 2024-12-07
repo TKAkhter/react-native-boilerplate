@@ -1,53 +1,74 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
 import { TextInput, Button, Text } from "react-native-paper";
-import { useDispatch } from "react-redux";
-import { useRouter } from "expo-router";
-import { loginRequest } from "@/api/auth";
-import { login } from "@/redux/slices/authSlice";
-import { save } from "@/redux/slices/userSlice";
-import { axiosClient } from "@/common/axios";
+import { useDispatch, useSelector } from "react-redux";
+import { Redirect, useRouter } from "expo-router";
+import { Controller } from "react-hook-form";
+import useLogin from "@/hooks/useLogin";
+import { RootState } from "@/redux/store";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const dispatch = useDispatch();
   const router = useRouter();
+  const { control, handleLogin, errors, handleSubmit } = useLogin();
 
-  const handleLogin = async () => {
-    try {
-      setError("");
-      const data = await loginRequest(email, password);
-      dispatch(login(data.token));
-      dispatch(save(data.user));
-      axiosClient.defaults.headers["Authorization"] = `Bearer ${data.token}`;
-      router.push("/");
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+
+  if (isAuthenticated) {
+    console.log("RootLayout: Redirecting user to Dashboard");
+    return <Redirect href="/dashboard" />;
+  }
 
   return (
     <View style={styles.container}>
       <Text variant="headlineMedium">Login</Text>
-      <TextInput
-        label="Email"
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
-        keyboardType="email-address"
-        autoCapitalize="none"
+      <Controller
+        control={control}
+        name="email"
+        rules={{
+          required: "Email is required",
+          pattern: {
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: "Invalid email format",
+          },
+        }}
+        render={({ field: { onChange, value } }) => (
+          <TextInput
+            label="Email"
+            value={value}
+            onChangeText={onChange}
+            style={styles.input}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+        )}
       />
-      <TextInput
-        label="Password"
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-        secureTextEntry
+      {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
+
+      <Controller
+        control={control}
+        name="password"
+        rules={{
+          required: "Password is required",
+          minLength: {
+            value: 6,
+            message: "Password must be at least 6 characters long",
+          },
+        }}
+        render={({ field: { onChange, value } }) => (
+          <TextInput
+            label="Password"
+            value={value}
+            onChangeText={onChange}
+            style={styles.input}
+            secureTextEntry
+          />
+        )}
       />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      <Button mode="contained" onPress={handleLogin}>
+      {errors.password && (
+        <Text style={styles.error}>{errors.password.message}</Text>
+      )}
+
+      <Button mode="contained" onPress={handleSubmit(handleLogin)}>
         Login
       </Button>
       <Button

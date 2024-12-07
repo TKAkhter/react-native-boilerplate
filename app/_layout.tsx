@@ -19,36 +19,52 @@ import { PersistGate } from "redux-persist/integration/react";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-  });
+  try {
+    console.log("RootLayout: Rendering application layout.");
+    const colorScheme = useColorScheme();
+    const [loaded] = useFonts({
+      SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    });
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    useEffect(() => {
+      if (loaded) {
+        SplashScreen.hideAsync();
+      }
+    }, [loaded]);
+
+    if (!loaded) {
+      return null;
     }
-  }, [loaded]);
 
-  if (!loaded) {
-    return null;
+    console.log(
+      `RootLayout: Current theme is ${colorScheme ? "dark" : "light"}`,
+    );
+
+    return (
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <PaperProvider>
+            <ThemeProvider
+              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+            >
+              <Stack>
+                <Stack.Screen name="/" />
+                <Stack.Screen
+                  name="dashboard"
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen name="+not-found" />
+                <Stack.Screen name="login" />
+                <Stack.Screen name="register" />
+              </Stack>
+              <StatusBar style="auto" />
+            </ThemeProvider>
+          </PaperProvider>
+        </PersistGate>
+      </Provider>
+    );
+  } catch (err) {
+    console.error("RootLayout: Error rendering layout:", err);
+    throw err;
   }
-
-  return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <PaperProvider>
-          <ThemeProvider
-            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-          >
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style="auto" />
-          </ThemeProvider>
-        </PaperProvider>
-      </PersistGate>
-    </Provider>
-  );
 }

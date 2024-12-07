@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import React from "react";
 import { Platform } from "react-native";
 
@@ -9,13 +9,22 @@ import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import Login from "../login";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const auth = useSelector((state: RootState) => state.auth);
+  const user = useSelector((state: RootState) => state.user);
+  console.log("RootLayout: Current Auth", auth);
+  console.log("RootLayout: Current User", user);
+
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
-  return isAuthenticated ? (
+  if (!isAuthenticated) {
+    console.log("RootLayout: Redirecting user to login");
+    return <Redirect href="/login" />;
+  }
+
+  return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
@@ -32,9 +41,9 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="dashboard"
         options={{
-          title: "Home",
+          title: "Dashboard",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="house.fill" color={color} />
           ),
@@ -50,7 +59,5 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
-  ) : (
-    <Login />
   );
 }
