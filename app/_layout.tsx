@@ -14,6 +14,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import store, { persistor } from "@/redux/store";
 import { Provider as PaperProvider } from "react-native-paper";
 import { PersistGate } from "redux-persist/integration/react";
+import { RootSiblingParent } from "react-native-root-siblings";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -41,27 +42,35 @@ export default function RootLayout() {
     );
 
     return (
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <PaperProvider>
-            <ThemeProvider
-              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-            >
-              <Stack>
-                <Stack.Screen name="/" />
-                <Stack.Screen
-                  name="dashboard"
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen name="+not-found" />
-                <Stack.Screen name="login" />
-                <Stack.Screen name="register" />
-              </Stack>
-              <StatusBar style="auto" />
-            </ThemeProvider>
-          </PaperProvider>
-        </PersistGate>
-      </Provider>
+      <RootSiblingParent>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <PaperProvider>
+              <ThemeProvider
+                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+              >
+                <Stack>
+                  <Stack.Screen
+                    name="(home)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen name="+not-found" />
+                  <Stack.Screen name="login" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="register"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="reset-password"
+                    options={{ headerShown: false }}
+                  />
+                </Stack>
+                <StatusBar style="auto" />
+              </ThemeProvider>
+            </PaperProvider>
+          </PersistGate>
+        </Provider>
+      </RootSiblingParent>
     );
   } catch (err) {
     console.error("RootLayout: Error rendering layout:", err);

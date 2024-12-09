@@ -1,14 +1,21 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import { TextInput, Button, Text } from "react-native-paper";
+import { View, TouchableOpacity } from "react-native";
+import { Text } from "react-native-paper";
+import Background from "../components/ui/Background";
+import Logo from "../components/ui/Logo";
+import Header from "../components/ui/Header";
+import Button from "../components/ui/Button";
+import TextInput from "../components/ui/TextInput";
+import BackButton from "../components/ui/BackButton";
+import { theme, themeStyles } from "../core/theme";
 import { Redirect, useRouter } from "expo-router";
-import { Controller } from "react-hook-form";
-import useRegister from "@/hooks/useRegister";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import useRegister from "@/hooks/useRegister";
+import { Controller } from "react-hook-form";
 
-export default function Signup() {
-  console.log("Rendering Signup component");
+export default function RegisterScreen() {
+  console.log("Rendering Register component");
   const { control, handleSignup, errors, getValues, handleSubmit } =
     useRegister();
   const router = useRouter();
@@ -21,9 +28,10 @@ export default function Signup() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text variant="headlineMedium">Sign Up</Text>
-
+    <Background>
+      <BackButton goBack={router.back} />
+      <Logo />
+      <Header>Create Account</Header>
       {/* Name Input */}
       <Controller
         name="name"
@@ -33,16 +41,18 @@ export default function Signup() {
           <TextInput
             label="Name"
             value={value}
-            onChangeText={(text) => {
+            onChangeText={(text: any) => {
               console.log("Name input changed:", text);
               onChange(text);
             }}
-            style={styles.input}
+            style={themeStyles.input}
             error={!!errors.name}
           />
         )}
       />
-      {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
+      {errors.name && (
+        <Text style={themeStyles.error}>{errors.name.message}</Text>
+      )}
 
       {/* Username Input */}
       <Controller
@@ -53,17 +63,17 @@ export default function Signup() {
           <TextInput
             label="Username"
             value={value}
-            onChangeText={(text) => {
+            onChangeText={(text: any) => {
               console.log("Username input changed:", text);
               onChange(text);
             }}
-            style={styles.input}
+            style={themeStyles.input}
             error={!!errors.username}
           />
         )}
       />
       {errors.username && (
-        <Text style={styles.error}>{errors.username.message}</Text>
+        <Text style={themeStyles.error}>{errors.username.message}</Text>
       )}
 
       {/* Email Input */}
@@ -81,18 +91,20 @@ export default function Signup() {
           <TextInput
             label="Email"
             value={value}
-            onChangeText={(text) => {
+            onChangeText={(text: any) => {
               console.log("Email input changed:", text);
               onChange(text);
             }}
-            style={styles.input}
+            style={themeStyles.input}
             keyboardType="email-address"
             autoCapitalize="none"
             error={!!errors.email}
           />
         )}
       />
-      {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
+      {errors.email && (
+        <Text style={themeStyles.error}>{errors.email.message}</Text>
+      )}
 
       {/* Password Input */}
       <Controller
@@ -109,18 +121,18 @@ export default function Signup() {
           <TextInput
             label="Password"
             value={value}
-            onChangeText={(text) => {
+            onChangeText={(text: any) => {
               console.log("Password input changed");
               onChange(text);
             }}
-            style={styles.input}
+            style={themeStyles.input}
             secureTextEntry
             error={!!errors.password}
           />
         )}
       />
       {errors.password && (
-        <Text style={styles.error}>{errors.password.message}</Text>
+        <Text style={themeStyles.error}>{errors.password.message}</Text>
       )}
 
       {/* Confirm Password Input */}
@@ -136,54 +148,34 @@ export default function Signup() {
           <TextInput
             label="Confirm Password"
             value={value}
-            onChangeText={(text) => {
+            onChangeText={(text: any) => {
               console.log("Confirm Password input changed");
               onChange(text);
             }}
-            style={styles.input}
+            style={themeStyles.input}
             secureTextEntry
             error={!!errors.confirmPassword}
           />
         )}
       />
       {errors.confirmPassword && (
-        <Text style={styles.error}>{errors.confirmPassword.message}</Text>
+        <Text style={themeStyles.error}>{errors.confirmPassword.message}</Text>
       )}
 
       {/* Submit Button */}
-      <Button mode="contained" onPress={handleSubmit(handleSignup)}>
+      <Button
+        style={Button}
+        mode="contained"
+        onPress={handleSubmit(handleSignup)}
+      >
         Sign Up
       </Button>
-
-      {/* Navigate to Login */}
-      <Button
-        mode="text"
-        onPress={() => {
-          console.log("Navigating to login page");
-          router.push("/login");
-        }}
-        style={styles.button}
-      >
-        Already have an account? Login
-      </Button>
-    </View>
+      <View style={themeStyles.row}>
+        <Text>Already have an account? </Text>
+        <TouchableOpacity onPress={() => router.push("/login")}>
+          <Text style={themeStyles.link}>Login</Text>
+        </TouchableOpacity>
+      </View>
+    </Background>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    padding: 20,
-  },
-  input: {
-    marginBottom: 10,
-  },
-  error: {
-    color: "red",
-    marginBottom: 10,
-  },
-  button: {
-    marginTop: 10,
-  },
-});

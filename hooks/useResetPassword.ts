@@ -5,11 +5,10 @@ import { login } from "../redux/slices/authSlice";
 import { save } from "../redux/slices/userSlice";
 import { useRouter } from "expo-router";
 import { useForm } from "react-hook-form";
-import { loginRequest, signupRequest } from "@/api/auth";
-import { LoginFormValues } from "@/types/types";
-import { toast } from "@/common/toast";
+import { loginRequest } from "@/api/auth";
+import { ResetPasswordValues } from "@/types/types";
 
-const useRegister = () => {
+const useResetPassword = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -17,22 +16,20 @@ const useRegister = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormValues>({
+  } = useForm<ResetPasswordValues>({
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
-  const handleLogin = async (data: LoginFormValues) => {
+  const handleLogin = async (data: ResetPasswordValues) => {
     console.log("LoginScreen: Attempting to login with email:", data.email);
     try {
-      const { email, password } = data;
+      const { email } = data;
 
       // Attempting to login
-      const response = await loginRequest(email, password);
+      const response = await loginRequest(email, "");
       console.log("LoginScreen: Login successful:", response);
-      toast.success("JSON.stringify(response)");
       if (response) {
         dispatch(login(response.token));
         dispatch(save(response.user));
@@ -41,7 +38,6 @@ const useRegister = () => {
         router.push("/");
       } else {
         console.log("Something went wrong!");
-        toast.error("JSON.stringify(response)");
       }
     } catch (err: any) {
       console.error("LoginScreen: Login error:", err.response.data.message);
@@ -51,4 +47,4 @@ const useRegister = () => {
   return { control, handleLogin, errors, handleSubmit };
 };
 
-export default useRegister;
+export default useResetPassword;

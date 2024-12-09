@@ -1,11 +1,18 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import { TextInput, Button, Text } from "react-native-paper";
-import { useDispatch, useSelector } from "react-redux";
+import { TouchableOpacity, View } from "react-native";
+import { Text } from "react-native-paper";
+import { useSelector } from "react-redux";
+import Background from "../components/ui/Background";
 import { Redirect, useRouter } from "expo-router";
-import { Controller } from "react-hook-form";
+import Logo from "../components/ui/Logo";
+import Header from "../components/ui/Header";
+import Button from "../components/ui/Button";
+import TextInput from "../components/ui/TextInput";
+import BackButton from "../components/ui/BackButton";
 import useLogin from "@/hooks/useLogin";
+import { theme, themeStyles } from "../core/theme";
 import { RootState } from "@/redux/store";
+import { Controller } from "react-hook-form";
 
 export default function Login() {
   const router = useRouter();
@@ -19,8 +26,10 @@ export default function Login() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text variant="headlineMedium">Login</Text>
+    <Background>
+      <BackButton goBack={router.back} />
+      <Logo />
+      <Header>Welcome back.</Header>
       <Controller
         control={control}
         name="email"
@@ -36,13 +45,15 @@ export default function Login() {
             label="Email"
             value={value}
             onChangeText={onChange}
-            style={styles.input}
+            style={themeStyles.input}
             keyboardType="email-address"
             autoCapitalize="none"
           />
         )}
       />
-      {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
+      {errors.email && (
+        <Text style={themeStyles.error}>{errors.email.message}</Text>
+      )}
 
       <Controller
         control={control}
@@ -59,43 +70,33 @@ export default function Login() {
             label="Password"
             value={value}
             onChangeText={onChange}
-            style={styles.input}
+            style={themeStyles.input}
             secureTextEntry
           />
         )}
       />
       {errors.password && (
-        <Text style={styles.error}>{errors.password.message}</Text>
+        <Text style={themeStyles.error}>{errors.password.message}</Text>
       )}
 
-      <Button mode="contained" onPress={handleSubmit(handleLogin)}>
+      <View style={themeStyles.forgotPassword}>
+        <TouchableOpacity onPress={() => router.push("/reset-password")}>
+          <Text style={themeStyles.forgot}>Forgot your password?</Text>
+        </TouchableOpacity>
+      </View>
+      <Button
+        style={Button}
+        mode="contained"
+        onPress={handleSubmit(handleLogin)}
+      >
         Login
       </Button>
-      <Button
-        mode="text"
-        onPress={() => router.push("/register")}
-        style={styles.button}
-      >
-        Don't have an account? Sign Up
-      </Button>
-    </View>
+      <View style={themeStyles.row}>
+        <Text>Don’t have an account? </Text>
+        <TouchableOpacity onPress={() => router.push("/register")}>
+          <Text style={themeStyles.link}>Sign up</Text>
+        </TouchableOpacity>
+      </View>
+    </Background>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    padding: 20,
-  },
-  input: {
-    marginBottom: 10,
-  },
-  error: {
-    color: "red",
-    marginBottom: 10,
-  },
-  button: {
-    marginTop: 10,
-  },
-});

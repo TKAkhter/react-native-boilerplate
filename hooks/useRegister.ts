@@ -47,6 +47,7 @@ const useRegister = () => {
 
     try {
       const response = await signupRequest(data);
+      console.log("🚀 ~ handleSignup ~ response:", response);
 
       console.log(
         "Signup request successful, dispatching login and save actions",
@@ -62,7 +63,7 @@ const useRegister = () => {
       );
 
       console.log("Redirecting to home page");
-      router.push("/");
+      router.push("/dashboard");
     } catch (err: any) {
       console.error("Error during signup:", err.message);
       alert(err.message || "An error occurred. Please try again.");

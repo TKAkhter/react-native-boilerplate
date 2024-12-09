@@ -19,3 +19,7 @@ export interface LoginFormValues {
   email: string;
   password: string;
 }
+
+export interface ResetPasswordValues {
+  email: string;
+}
