@@ -11,7 +11,7 @@ import { Redirect, useRouter } from "expo-router";
 import { RootState } from "@/redux/store";
 import useResetPassword from "@/hooks/useResetPassword";
 import { Controller } from "react-hook-form";
-import { theme, themeStyles } from "@/core/theme";
+import { themeStyles } from "@/core/theme";
 
 export default function ResetPasswordScreen() {
   const router = useRouter();

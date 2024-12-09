@@ -10,7 +10,7 @@ import Button from "../components/ui/Button";
 import TextInput from "../components/ui/TextInput";
 import BackButton from "../components/ui/BackButton";
 import useLogin from "@/hooks/useLogin";
-import { theme, themeStyles } from "../core/theme";
+import { themeStyles } from "../core/theme";
 import { RootState } from "@/redux/store";
 import { Controller } from "react-hook-form";
 

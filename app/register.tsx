@@ -7,7 +7,7 @@ import Header from "../components/ui/Header";
 import Button from "../components/ui/Button";
 import TextInput from "../components/ui/TextInput";
 import BackButton from "../components/ui/BackButton";
-import { theme, themeStyles } from "../core/theme";
+import { themeStyles } from "../core/theme";
 import { Redirect, useRouter } from "expo-router";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";

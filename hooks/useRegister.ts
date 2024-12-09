@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { axiosClient } from "../common/axios";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/slices/authSlice";
 import { save } from "../redux/slices/userSlice";

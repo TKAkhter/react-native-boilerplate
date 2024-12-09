@@ -1,11 +1,10 @@
-import { useState } from "react";
 import { axiosClient } from "../common/axios";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/slices/authSlice";
 import { save } from "../redux/slices/userSlice";
 import { useRouter } from "expo-router";
 import { useForm } from "react-hook-form";
-import { loginRequest, signupRequest } from "@/api/auth";
+import { loginRequest } from "@/api/auth";
 import { LoginFormValues } from "@/types/types";
 import { toast } from "@/common/toast";
 
