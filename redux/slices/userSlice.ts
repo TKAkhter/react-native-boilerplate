@@ -1,3 +1,4 @@
+import { log } from "@/common/logger";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface UserState {
@@ -23,7 +24,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     save: (state, action: PayloadAction<UserState>) => {
-      console.log("Dispatching save action with payload:", action.payload);
+      log.info("Dispatching save action with payload:", action.payload);
       state.email = action.payload.email;
       state.id = action.payload.id;
       state.username = action.payload.username;
@@ -32,7 +33,7 @@ const userSlice = createSlice({
       state.bio = action.payload.bio;
     },
     remove: (state) => {
-      console.log("Dispatching remove action with state:", state);
+      log.info("Dispatching remove action with state:", state);
       state.email = "";
       state.id = "";
       state.username = "";

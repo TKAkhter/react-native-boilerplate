@@ -12,15 +12,17 @@ import { RootState } from "@/redux/store";
 import useResetPassword from "@/hooks/useResetPassword";
 import { Controller } from "react-hook-form";
 import { themeStyles } from "@/core/theme";
+import { log } from "@/common/logger";
 
 export default function ResetPasswordScreen() {
+  log.info("Rendering reset password component");
   const router = useRouter();
   const { control, handleLogin, errors, handleSubmit } = useResetPassword();
 
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   if (isAuthenticated) {
-    console.log("RootLayout: Redirecting user to Dashboard");
+    log.info("RootLayout: Redirecting user to Dashboard");
     return <Redirect href="/dashboard" />;
   }
 

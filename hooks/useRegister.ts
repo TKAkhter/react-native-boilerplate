@@ -4,6 +4,9 @@ import { save } from "../redux/slices/userSlice";
 import { useRouter } from "expo-router";
 import { useForm } from "react-hook-form";
 import { signupRequest } from "@/api/auth";
+import { toast } from "@/common/toast";
+import { handleToastError } from "@/utils/utils";
+import { log } from "@/common/logger";
 
 export interface RegisterFormValues {
   name: string;
@@ -33,41 +36,39 @@ const useRegister = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const handleSignup = async (data: RegisterFormValues) => {
-    console.log("Signup initiated with data:", data);
+  const handleSignup = async (signupData: RegisterFormValues) => {
+    log.info("Signup initiated with data:", signupData);
 
     // Simple password match validation
-    if (data.password !== data.confirmPassword) {
-      console.error("Passwords do not match");
+    if (signupData.password !== signupData.confirmPassword) {
+      log.error("Passwords do not match");
       alert("Passwords do not match");
       return;
     }
 
     try {
-      const response = await signupRequest(data);
-      console.log("🚀 ~ handleSignup ~ response:", response);
-
-      console.log(
-        "Signup request successful, dispatching login and save actions",
-      );
-      dispatch(login(response.token));
-      dispatch(
-        save({
-          email: response.email,
-          id: response.id,
-          username: response.username,
-          name: response.name,
-        }),
-      );
-
-      console.log("Redirecting to home page");
-      router.push("/dashboard");
+      const { error, data } = await signupRequest(signupData);
+      console.log("🚀 ~ handleSignup ~ response:", data);
+      log.info("Signup request successful, dispatching login and save actions");
+      if (!error) {
+        toast.success("User created!");
+        dispatch(login(data.token!));
+        dispatch(
+          save({
+            email: data.data.email,
+            id: data.data.id,
+            username: data.data.username,
+            name: data.data.name,
+          }),
+        );
+        log.info("Redirecting to home page");
+        router.push("/dashboard");
+      }
     } catch (err: any) {
-      console.error("Error during signup:", err.message);
-      alert(err.message || "An error occurred. Please try again.");
+      log.error("Error during signup:", err.message);
+      handleToastError(err);
     }
   };
-
   return { control, handleSignup, getValues, errors, handleSubmit };
 };
 

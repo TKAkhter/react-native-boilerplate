@@ -9,18 +9,19 @@ import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { log } from "@/common/logger";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const auth = useSelector((state: RootState) => state.auth);
   const user = useSelector((state: RootState) => state.user);
-  console.log("RootLayout: Current Auth", auth);
-  console.log("RootLayout: Current User", user);
+  log.info("RootLayout: Current Auth", auth);
+  log.info("RootLayout: Current User", user);
 
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   if (!isAuthenticated) {
-    console.log("RootLayout: Redirecting user to login");
+    log.info("RootLayout: Redirecting user to login");
     return <Redirect href="/login" />;
   }
 

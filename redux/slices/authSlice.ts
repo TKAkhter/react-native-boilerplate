@@ -1,3 +1,4 @@
+import { log } from "@/common/logger";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface AuthState {
@@ -15,12 +16,12 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action: PayloadAction<string>) => {
-      console.log("Dispatching login action with payload:", action.payload);
+      log.info("Dispatching login action with payload:", action.payload);
       state.token = action.payload;
       state.isAuthenticated = true;
     },
     logout: (state) => {
-      console.log("Dispatching login action with state:", state);
+      log.info("Dispatching login action with state:", state);
       state.token = null;
       state.isAuthenticated = false;
     },

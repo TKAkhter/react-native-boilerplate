@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, TouchableOpacity } from "react-native";
-import { Text } from "react-native-paper";
+import { Text, TextInput as TextInputIcon } from "react-native-paper";
 import Background from "../components/ui/Background";
 import Logo from "../components/ui/Logo";
 import Header from "../components/ui/Header";
@@ -13,9 +13,11 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import useRegister from "@/hooks/useRegister";
 import { Controller } from "react-hook-form";
+import { log } from "@/common/logger";
 
 export default function RegisterScreen() {
-  console.log("Rendering Register component");
+  log.info("Rendering Register component");
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const { control, handleSignup, errors, getValues, handleSubmit } =
     useRegister();
   const router = useRouter();
@@ -23,7 +25,7 @@ export default function RegisterScreen() {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   if (isAuthenticated) {
-    console.log("RootLayout: Redirecting user to Dashboard");
+    log.info("RootLayout: Redirecting user to Dashboard");
     return <Redirect href="/dashboard" />;
   }
 
@@ -41,12 +43,10 @@ export default function RegisterScreen() {
           <TextInput
             label="Name"
             value={value}
-            onChangeText={(text: any) => {
-              console.log("Name input changed:", text);
-              onChange(text);
-            }}
+            onChangeText={(text: any) => onChange(text)}
             style={themeStyles.input}
             error={!!errors.name}
+            mode="outlined"
           />
         )}
       />
@@ -63,10 +63,7 @@ export default function RegisterScreen() {
           <TextInput
             label="Username"
             value={value}
-            onChangeText={(text: any) => {
-              console.log("Username input changed:", text);
-              onChange(text);
-            }}
+            onChangeText={(text: any) => onChange(text)}
             style={themeStyles.input}
             error={!!errors.username}
           />
@@ -91,10 +88,7 @@ export default function RegisterScreen() {
           <TextInput
             label="Email"
             value={value}
-            onChangeText={(text: any) => {
-              console.log("Email input changed:", text);
-              onChange(text);
-            }}
+            onChangeText={(text: any) => onChange(text)}
             style={themeStyles.input}
             keyboardType="email-address"
             autoCapitalize="none"
@@ -112,22 +106,39 @@ export default function RegisterScreen() {
         control={control}
         rules={{
           required: "Password is required",
-          minLength: {
-            value: 6,
-            message: "Password must be at least 6 characters long",
+          validate: (value) => {
+            if (value.length < 8) {
+              return "Password must be at least 8 characters long";
+            }
+            if (!/[a-z]/.test(value)) {
+              return "Password must contain at least one lowercase letter";
+            }
+            if (!/[A-Z]/.test(value)) {
+              return "Password must contain at least one uppercase letter";
+            }
+            if (!/[0-9]/.test(value)) {
+              return "Password must contain at least one number";
+            }
+            if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+              return "Password must contain at least one special character";
+            }
+            return true;
           },
         }}
         render={({ field: { onChange, value } }) => (
           <TextInput
             label="Password"
             value={value}
-            onChangeText={(text: any) => {
-              console.log("Password input changed");
-              onChange(text);
-            }}
+            onChangeText={(text: any) => onChange(text)}
             style={themeStyles.input}
-            secureTextEntry
             error={!!errors.password}
+            secureTextEntry={!passwordVisible}
+            right={
+              <TextInputIcon.Icon
+                icon={passwordVisible ? "eye-off" : "eye"}
+                onPress={() => setPasswordVisible(!passwordVisible)}
+              />
+            }
           />
         )}
       />
@@ -148,13 +159,16 @@ export default function RegisterScreen() {
           <TextInput
             label="Confirm Password"
             value={value}
-            onChangeText={(text: any) => {
-              console.log("Confirm Password input changed");
-              onChange(text);
-            }}
+            onChangeText={(text: any) => onChange(text)}
             style={themeStyles.input}
-            secureTextEntry
             error={!!errors.confirmPassword}
+            secureTextEntry={!passwordVisible}
+            right={
+              <TextInputIcon.Icon
+                icon={passwordVisible ? "eye-off" : "eye"}
+                onPress={() => setPasswordVisible(!passwordVisible)}
+              />
+            }
           />
         )}
       />

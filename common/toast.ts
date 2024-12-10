@@ -1,16 +1,17 @@
 import { theme } from "@/core/theme";
-import { Platform, ToastAndroid } from "react-native";
+import { Platform, TextStyle, ToastAndroid } from "react-native";
 import Toast from "react-native-root-toast";
+import { log } from "./logger";
 
-const defaultOptions = {
+const defaultOptions: any = {
   duration: Toast.durations.SHORT,
   position: Toast.positions.TOP,
-  shadow: true,
   animation: true,
   hideOnPress: true,
   delay: 0,
-  opacity: 0.5,
-  onHidden: () => console.log("Toast hidden"),
+  textStyle: {
+    textAlign: "left",
+  },
 };
 
 export const toast = {
@@ -20,7 +21,7 @@ export const toast = {
       : Toast.show(message, {
           ...defaultOptions,
           backgroundColor: theme.colors.primary, // Success Green
-          textColor: "#fff",
+          textColor: theme.colors.white,
         }),
   error: (message: string) =>
     Platform.OS === "android"
@@ -28,6 +29,6 @@ export const toast = {
       : Toast.show(message, {
           ...defaultOptions,
           backgroundColor: theme.colors.error, // Error Red
-          textColor: "#fff",
+          textColor: theme.colors.white,
         }),
 };

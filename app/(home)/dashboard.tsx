@@ -10,6 +10,7 @@ import { logout } from "@/redux/slices/authSlice";
 import { remove } from "@/redux/slices/userSlice";
 import { useRouter } from "expo-router";
 import { themeStyles } from "@/core/theme";
+import { log } from "@/common/logger";
 
 export default function Dashboard() {
   const dispatch = useDispatch();
@@ -31,8 +32,8 @@ export default function Dashboard() {
         onPress={() => {
           dispatch(logout());
           dispatch(remove());
-          console.log("Dashboard: logging out...");
-          router.push("/login");
+          log.info("Dashboard: logging out...");
+          router.replace("/login");
         }}
       >
         Logout

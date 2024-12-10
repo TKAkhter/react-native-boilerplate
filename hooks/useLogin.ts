@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import { loginRequest } from "@/api/auth";
 import { LoginFormValues } from "@/types/types";
 import { toast } from "@/common/toast";
+import { log } from "@/common/logger";
+import { handleToastError } from "@/utils/utils";
 
 const useRegister = () => {
   const dispatch = useDispatch();
@@ -23,27 +25,24 @@ const useRegister = () => {
     },
   });
 
-  const handleLogin = async (data: LoginFormValues) => {
-    console.log("LoginScreen: Attempting to login with email:", data.email);
+  const handleLogin = async (loginData: LoginFormValues) => {
+    log.info("LoginScreen: Attempting to login with email:", loginData.email);
     try {
-      const { email, password } = data;
+      const { email, password } = loginData;
 
       // Attempting to login
-      const response = await loginRequest(email, password);
-      console.log("LoginScreen: Login successful:", response);
-      toast.success("JSON.stringify(response)");
-      if (response) {
-        dispatch(login(response.token));
-        dispatch(save(response.user));
-        axiosClient.defaults.headers["Authorization"] =
-          `Bearer ${response.token}`;
+      const { error, data } = await loginRequest(email, password);
+      log.info("LoginScreen: Login successful:", data);
+      if (!error) {
+        toast.success("Login successful!");
+        dispatch(login(data.token));
+        dispatch(save(data.user));
+        axiosClient.defaults.headers["Authorization"] = `Bearer ${data.token}`;
         router.push("/");
-      } else {
-        console.log("Something went wrong!");
-        toast.error("JSON.stringify(response)");
       }
     } catch (err: any) {
-      console.error("LoginScreen: Login error:", err.response.data.message);
+      log.error("LoginScreen: Login error:", err.response.data.message);
+      handleToastError(err);
     }
   };
 

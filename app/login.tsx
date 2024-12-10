@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { TouchableOpacity, View } from "react-native";
-import { Text } from "react-native-paper";
+import { Text, TextInput as TextInputIcon } from "react-native-paper";
 import { useSelector } from "react-redux";
 import Background from "../components/ui/Background";
 import { Redirect, useRouter } from "expo-router";
@@ -13,15 +13,17 @@ import useLogin from "@/hooks/useLogin";
 import { themeStyles } from "../core/theme";
 import { RootState } from "@/redux/store";
 import { Controller } from "react-hook-form";
+import { log } from "@/common/logger";
 
 export default function Login() {
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const router = useRouter();
   const { control, handleLogin, errors, handleSubmit } = useLogin();
 
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   if (isAuthenticated) {
-    console.log("RootLayout: Redirecting user to Dashboard");
+    log.info("RootLayout: Redirecting user to Dashboard");
     return <Redirect href="/dashboard" />;
   }
 
@@ -71,7 +73,13 @@ export default function Login() {
             value={value}
             onChangeText={onChange}
             style={themeStyles.input}
-            secureTextEntry
+            secureTextEntry={!passwordVisible}
+            right={
+              <TextInputIcon.Icon
+                icon={passwordVisible ? "eye-off" : "eye"}
+                onPress={() => setPasswordVisible(!passwordVisible)}
+              />
+            }
           />
         )}
       />

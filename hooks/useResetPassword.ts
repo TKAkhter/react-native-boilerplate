@@ -6,6 +6,9 @@ import { useRouter } from "expo-router";
 import { useForm } from "react-hook-form";
 import { loginRequest } from "@/api/auth";
 import { ResetPasswordValues } from "@/types/types";
+import { log } from "@/common/logger";
+import { handleToastError } from "@/utils/utils";
+import { toast } from "@/common/toast";
 
 const useResetPassword = () => {
   const dispatch = useDispatch();
@@ -21,25 +24,23 @@ const useResetPassword = () => {
     },
   });
 
-  const handleLogin = async (data: ResetPasswordValues) => {
-    console.log("LoginScreen: Attempting to login with email:", data.email);
+  const handleLogin = async (loginData: ResetPasswordValues) => {
+    log.info("LoginScreen: Attempting to login with email:", loginData.email);
     try {
-      const { email } = data;
+      const { email } = loginData;
 
       // Attempting to login
-      const response = await loginRequest(email, "");
-      console.log("LoginScreen: Login successful:", response);
-      if (response) {
-        dispatch(login(response.token));
-        dispatch(save(response.user));
-        axiosClient.defaults.headers["Authorization"] =
-          `Bearer ${response.token}`;
+      const { error, data } = await loginRequest(email, "");
+      log.info("LoginScreen: Login successful:", data);
+      if (!error) {
+        dispatch(login(data.token!));
+        dispatch(save(data.user!));
+        axiosClient.defaults.headers["Authorization"] = `Bearer ${data.token}`;
         router.push("/");
-      } else {
-        console.log("Something went wrong!");
       }
     } catch (err: any) {
-      console.error("LoginScreen: Login error:", err.response.data.message);
+      log.error("LoginScreen: Login error:", err.response.data.message);
+      handleToastError(err);
     }
   };
 

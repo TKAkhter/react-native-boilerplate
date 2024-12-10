@@ -15,13 +15,14 @@ import store, { persistor } from "@/redux/store";
 import { Provider as PaperProvider } from "react-native-paper";
 import { PersistGate } from "redux-persist/integration/react";
 import { RootSiblingParent } from "react-native-root-siblings";
+import { log } from "@/common/logger";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   try {
-    console.log("RootLayout: Rendering application layout.");
+    log.info("RootLayout: Rendering application layout.");
     const colorScheme = useColorScheme();
     const [loaded] = useFonts({
       SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
@@ -37,9 +38,7 @@ export default function RootLayout() {
       return null;
     }
 
-    console.log(
-      `RootLayout: Current theme is ${colorScheme ? "dark" : "light"}`,
-    );
+    log.info(`RootLayout: Current theme is ${colorScheme ? "dark" : "light"}`);
 
     return (
       <RootSiblingParent>
@@ -73,7 +72,7 @@ export default function RootLayout() {
       </RootSiblingParent>
     );
   } catch (err) {
-    console.error("RootLayout: Error rendering layout:", err);
+    log.error("RootLayout: Error rendering layout:", err);
     throw err;
   }
 }

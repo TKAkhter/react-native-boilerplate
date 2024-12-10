@@ -3,10 +3,11 @@ import { Link, Stack } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { themeStyles } from "@/core/theme";
+import { log } from "@/common/logger";
 
 export default function NotFoundScreen() {
   try {
-    console.log("Rendering NotFoundScreen component");
+    log.info("Rendering NotFoundScreen component");
 
     return (
       <>
@@ -20,7 +21,7 @@ export default function NotFoundScreen() {
       </>
     );
   } catch (error: any) {
-    console.error("Error in NotFoundScreen component:", error);
+    log.error("Error in NotFoundScreen component:", error);
     return (
       <ThemedView style={themeStyles.container}>
         <ThemedText type="title">An unexpected error occurred.</ThemedText>
